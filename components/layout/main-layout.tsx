@@ -2,7 +2,7 @@
 
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { Home, Calendar, Building2, MessageSquare, LogOut, Bell } from 'lucide-react'
+import { Home, Calendar, Building2, MessageSquare, LogOut, Bell, BarChart2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { 
@@ -12,17 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
-import { companies, communications } from '@/lib/mockData'
 import { User } from '@/types'
+import { AppProvider, useAppContext } from './AppContext'
 
 interface MainLayoutProps {
   children: React.ReactNode
 }
 
-export function MainLayout({ children }: MainLayoutProps) {
+function MainLayoutContent({ children }: MainLayoutProps) {
   const router = useRouter()
   const pathname = usePathname()
   const [user, setUser] = useState<User | null>(null)
+  const { companies, communications } = useAppContext()
   const [notifications, setNotifications] = useState<{ overdue: number, dueToday: number }>({ overdue: 0, dueToday: 0 })
 
   useEffect(() => {
@@ -34,19 +35,32 @@ export function MainLayout({ children }: MainLayoutProps) {
     if (userData) {
       setUser(JSON.parse(userData))
     }
-
-    // Calculate notifications
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    const overdue = communications.filter(c => new Date(c.date) < today).length
-    const dueToday = communications.filter(c => new Date(c.date).toDateString() === today.toDateString()).length
-    setNotifications({ overdue, dueToday })
   }, [router, pathname])
+
+  useEffect(() => {
+    // Calculate notifications
+    const calculateNotifications = () => {
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      const overdue = communications.filter(c => new Date(c.date) < today).length
+      const dueToday = communications.filter(c => new Date(c.date).toDateString() === today.toDateString()).length
+      setNotifications({ overdue, dueToday })
+    }
+
+    calculateNotifications()
+
+    // Set up an interval to update notifications every minute
+    const intervalId = setInterval(calculateNotifications, 60000)
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(intervalId)
+  }, [communications])
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: Home },
-    { name: 'Companies Dashboard', href: '/companies', icon: Building2 },
-    { name: 'Calendar View', href: '/calendar', icon: Calendar },
+    { name: 'Companies', href: '/companies', icon: Building2 },
+    { name: 'Calendar', href: '/calendar', icon: Calendar },
+    { name: 'Analytics', href: '/analytics', icon: BarChart2 },
     ...(user?.role === 'admin' ? [
       { name: 'Admin Companies', href: '/admin/companies', icon: Building2 },
       { name: 'Admin Communication Methods', href: '/admin/methods', icon: MessageSquare },
@@ -65,10 +79,10 @@ export function MainLayout({ children }: MainLayoutProps) {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="min-h-screen bg-[#0A0A0A] text-white">
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className="w-64 bg-gray-900 border-r border-gray-800">
+        <div className="w-64 bg-[#111111] border-r border-[#1E1E1E]">
           <div className="flex flex-col h-full">
             <div className="p-4">
               <div className="flex items-center space-x-3">
@@ -86,7 +100,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 <Button
                   key={item.name}
                   variant="ghost"
-                  className="w-full justify-start"
+                  className={`w-full justify-start ${pathname === item.href ? 'bg-[#1E1E1E]' : ''}`}
                   onClick={() => router.push(item.href)}
                 >
                   <item.icon className="mr-2 h-4 w-4" />
@@ -94,7 +108,7 @@ export function MainLayout({ children }: MainLayoutProps) {
                 </Button>
               ))}
             </nav>
-            <div className="p-4 border-t border-gray-800">
+            <div className="p-4 border-t border-[#1E1E1E]">
               <Button
                 variant="ghost"
                 className="w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20"
@@ -109,7 +123,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto">
-          <div className="p-4 flex justify-between items-center bg-gray-900 border-b border-gray-800">
+          <div className="p-4 flex justify-between items-center bg-[#111111] border-b border-[#1E1E1E]">
             <h1 className="text-xl font-semibold">Communication Tracker</h1>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -122,12 +136,18 @@ export function MainLayout({ children }: MainLayoutProps) {
                   )}
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-gray-800 text-white border-gray-700">
-                <DropdownMenuItem className="focus:bg-gray-700">
-                  Overdue: {notifications.overdue}
+              <DropdownMenuContent align="end" className="w-56 bg-[#1E1E1E] text-white border-[#2E2E2E]">
+                <DropdownMenuItem className="focus:bg-[#2E2E2E]">
+                  <span className="flex items-center">
+                    <Badge variant="destructive" className="mr-2">{notifications.overdue}</Badge>
+                    Overdue
+                  </span>
                 </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-gray-700">
-                  Due Today: {notifications.dueToday}
+                <DropdownMenuItem className="focus:bg-[#2E2E2E]">
+                  <span className="flex items-center">
+                    <Badge variant="warning" className="mr-2">{notifications.dueToday}</Badge>
+                    Due Today
+                  </span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -136,6 +156,14 @@ export function MainLayout({ children }: MainLayoutProps) {
         </div>
       </div>
     </div>
+  )
+}
+
+export function MainLayout({ children }: MainLayoutProps) {
+  return (
+    <AppProvider>
+      <MainLayoutContent>{children}</MainLayoutContent>
+    </AppProvider>
   )
 }
 

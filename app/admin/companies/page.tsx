@@ -14,10 +14,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { companies } from '@/lib/mockData'
+import { useToast } from "@/components/ui/use-toast"
+import { companies as initialCompanies } from '@/lib/mockData'
 import { Company } from '@/types'
 
 export default function AdminCompaniesPage() {
+  const [companies, setCompanies] = useState(initialCompanies)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [newCompany, setNewCompany] = useState<Partial<Company>>({
     name: '',
@@ -29,10 +31,14 @@ export default function AdminCompaniesPage() {
     communicationPeriodicity: 30,
     status: 'active'
   })
+  const { toast } = useToast()
 
   const handleAddCompany = () => {
-    // In a real application, you would send this data to your backend
-    console.log('New company:', newCompany)
+    const company: Company = {
+      id: `company-${Date.now()}`,
+      ...newCompany as Company
+    }
+    setCompanies(prev => [...prev, company])
     setIsDialogOpen(false)
     setNewCompany({
       name: '',
@@ -44,11 +50,27 @@ export default function AdminCompaniesPage() {
       communicationPeriodicity: 30,
       status: 'active'
     })
-    // Here you would typically update the state with the new company
+    toast({
+      title: "Company Added",
+      description: `${company.name} has been added successfully.`,
+    })
+  }
+
+  const handleEditCompany = (company: Company) => {
+    // Implement edit functionality
+    console.log('Edit company:', company)
+  }
+
+  const handleDeleteCompany = (companyId: string) => {
+    setCompanies(prev => prev.filter(company => company.id !== companyId))
+    toast({
+      title: "Company Deleted",
+      description: "The company has been deleted successfully.",
+    })
   }
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8">
+    <div className="min-h-screen bg-[#0A0A0A] text-white p-4 md:p-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-semibold mb-2">📋 Company Management</h1>
@@ -62,7 +84,7 @@ export default function AdminCompaniesPage() {
               + Add New Company
             </Button>
           </DialogTrigger>
-          <DialogContent className="bg-gray-900 text-white">
+          <DialogContent className="bg-[#111111] text-white border-[#1E1E1E]">
             <DialogHeader>
               <DialogTitle>Add New Company</DialogTitle>
             </DialogHeader>
@@ -73,7 +95,7 @@ export default function AdminCompaniesPage() {
                   id="name"
                   value={newCompany.name}
                   onChange={(e) => setNewCompany({...newCompany, name: e.target.value})}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-[#1E1E1E] border-[#2E2E2E] text-white"
                 />
               </div>
               <div>
@@ -82,7 +104,7 @@ export default function AdminCompaniesPage() {
                   id="location"
                   value={newCompany.location}
                   onChange={(e) => setNewCompany({...newCompany, location: e.target.value})}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-[#1E1E1E] border-[#2E2E2E] text-white"
                 />
               </div>
               <div>
@@ -91,7 +113,7 @@ export default function AdminCompaniesPage() {
                   id="linkedin"
                   value={newCompany.linkedinProfile}
                   onChange={(e) => setNewCompany({...newCompany, linkedinProfile: e.target.value})}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-[#1E1E1E] border-[#2E2E2E] text-white"
                 />
               </div>
               <div>
@@ -100,7 +122,7 @@ export default function AdminCompaniesPage() {
                   id="email"
                   value={newCompany.emails?.[0] || ''}
                   onChange={(e) => setNewCompany({...newCompany, emails: [e.target.value]})}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-[#1E1E1E] border-[#2E2E2E] text-white"
                 />
               </div>
               <div>
@@ -109,7 +131,7 @@ export default function AdminCompaniesPage() {
                   id="phone"
                   value={newCompany.phoneNumbers?.[0] || ''}
                   onChange={(e) => setNewCompany({...newCompany, phoneNumbers: [e.target.value]})}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-[#1E1E1E] border-[#2E2E2E] text-white"
                 />
               </div>
               <div>
@@ -119,7 +141,7 @@ export default function AdminCompaniesPage() {
                   type="number"
                   value={newCompany.communicationPeriodicity}
                   onChange={(e) => setNewCompany({...newCompany, communicationPeriodicity: parseInt(e.target.value)})}
-                  className="bg-gray-800 border-gray-700 text-white"
+                  className="bg-[#1E1E1E] border-[#2E2E2E] text-white"
                 />
               </div>
               <div>
@@ -128,7 +150,7 @@ export default function AdminCompaniesPage() {
                   value={newCompany.status} 
                   onValueChange={(value: 'active' | 'inactive' | 'pending') => setNewCompany({...newCompany, status: value})}
                 >
-                  <SelectTrigger id="status" className="w-full bg-gray-800 border-gray-700">
+                  <SelectTrigger id="status" className="w-full bg-[#1E1E1E] border-[#2E2E2E]">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
@@ -146,10 +168,10 @@ export default function AdminCompaniesPage() {
         </Dialog>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-800">
+      <div className="overflow-x-auto rounded-lg border border-[#1E1E1E]">
         <Table>
-          <TableHeader className="bg-gray-900">
-            <TableRow className="border-gray-800">
+          <TableHeader className="bg-[#111111]">
+            <TableRow className="border-[#1E1E1E]">
               <TableHead className="text-gray-400">Name</TableHead>
               <TableHead className="text-gray-400">Address</TableHead>
               <TableHead className="text-gray-400">Phone</TableHead>
@@ -160,7 +182,7 @@ export default function AdminCompaniesPage() {
           </TableHeader>
           <TableBody>
             {companies.map((company) => (
-              <TableRow key={company.id} className="border-gray-800">
+              <TableRow key={company.id} className="border-[#1E1E1E]">
                 <TableCell>{company.name}</TableCell>
                 <TableCell className="text-gray-400">{company.location}</TableCell>
                 <TableCell>{company.phoneNumbers[0]}</TableCell>
@@ -175,10 +197,10 @@ export default function AdminCompaniesPage() {
                 <TableCell>{company.communicationPeriodicity}</TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="border-blue-600 text-blue-600 hover:bg-blue-600/10">
+                    <Button variant="outline" size="sm" className="border-blue-600 text-blue-600 hover:bg-blue-600/10" onClick={() => handleEditCompany(company)}>
                       Edit
                     </Button>
-                    <Button variant="outline" size="sm" className="border-red-600 text-red-600 hover:bg-red-600/10">
+                    <Button variant="outline" size="sm" className="border-red-600 text-red-600 hover:bg-red-600/10" onClick={() => handleDeleteCompany(company.id)}>
                       Delete
                     </Button>
                   </div>
