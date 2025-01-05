@@ -1,43 +1,112 @@
-# Calendar Application for Communication Tracking
+# Communication Tracker
 
-## Project Overview
+## Overview
 
-The Calendar Application for Communication Tracking is a React-based tool designed to help organizations maintain and manage their interactions with various companies. It provides a centralized platform to log past interactions, plan future communications, and manage engagement frequency based on predefined schedules. The application comprises three main modules:
-
-1. **Admin Module**: Allows administrators to configure companies and set communication parameters.
-2. **User Module**: Enables users to visualize, manage, and perform communication tasks.
-3. **Reporting and Analytics Module** (Optional): Provides actionable insights based on communication data.
+Communication Tracker is a comprehensive web application designed to help businesses manage and track their communications with clients and partners. Built with Next.js and React, this application provides a user-friendly interface for logging, analyzing, and visualizing communication data.
 
 ## Features
 
-### Admin Module
+- **Dashboard**: Get an overview of recent activities and key metrics.
+- **Companies Management**: Add, edit, and delete company profiles.
+- **Communication Logging**: Record various types of communications with companies.
+- **Calendar View**: Visualize communications on a monthly calendar.
+- **Analytics**: Generate insights from communication data with interactive charts.
+- **Admin Panel**: Manage communication methods and company data (admin-only access).
+- **Real-time Notifications**: Stay updated on overdue and upcoming communications.
+- **Responsive Design**: Fully functional on both desktop and mobile devices.
 
-- **Company Management**: Add, edit, and delete company information, including name, location, LinkedIn profile, emails, phone numbers, comments, and communication periodicity.
-- **Communication Method Management**: Define available communication methods with attributes like name, description, sequence, and mandatory flag.
+## Tech Stack
 
-### User Module
+- Next.js 13 (App Router)
+- React 18
+- TypeScript
+- Tailwind CSS
+- shadcn/ui components
+- Recharts for data visualization
 
-- **Dashboard**: View a grid of companies with details such as company name, last five communications, and next scheduled communication.
-- **Color-Coded Highlights**: Visual indicators for overdue (red) and due today (yellow) communications.
-- **Interactive Features**: Hover effects displaying notes or comments for completed communications.
-- **Communication Actions**: Log new communications by selecting companies and specifying communication type, date, and notes.
-- **Notifications**: Dedicated sections for overdue and today's communications, with badge counts.
-- **Calendar View**: Interface to view past communications and manage upcoming ones.
+## Prerequisites
 
-## Requirements
+Before you begin, ensure you have the following installed:
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
 
-Before deploying the application, ensure that the following prerequisites are installed on your system:
+## Installation
 
-- **Node.js**: A JavaScript runtime environment. Download and install the latest version from [nodejs.org](https://nodejs.org/).
-- **npm**: Node.js package manager, typically installed alongside Node.js.
-- **Git**: Version control system to clone the repository. Download and install from [git-scm.com](https://git-scm.com/).
+1. Clone the repository:
+   \`\`\`
+   git clone https://github.com/your-username/communication-tracker.git
+   cd communication-tracker
+   \`\`\`
 
-## Deployment Instructions
+2. Install the dependencies:
+   \`\`\`
+   npm install
+   \`\`\`
 
-Follow these steps to deploy the application:
+3. Create a \`.env.local\` file in the root directory and add the following environment variables:
+   \`\`\`
+   NEXT_PUBLIC_API_URL=your_api_url_here
+   \`\`\`
 
-1. **Clone the Repository**:
+## Running the Application
 
-   ```bash
-   git clone https://github.com/Pranay898/Calender_based_app_ENTNT.git
-   cd Calender_based_app_ENTNT
+To run the application in development mode:
+
+\`\`\`
+npm run dev
+\`\`\`
+
+The application will be available at \`http://localhost:3000\`.
+
+To build the application for production:
+
+\`\`\`
+npm run build
+npm start
+\`\`\`
+
+## Project Structure
+
+\`\`\`
+communication-tracker/
+├── app/
+│   ├── admin/
+│   │   ├── companies/
+│   │   └── methods/
+│   ├── analytics/
+│   ├── calendar/
+│   ├── companies/
+│   ├── dashboard/
+│   └── login/
+├── components/
+│   ├── layout/
+│   └── ui/
+├── lib/
+├── public/
+├── styles/
+├── types/
+├── .env.local
+├── next.config.js
+├── package.json
+├── README.md
+└── tsconfig.json
+\`\`\`
+
+## Usage
+
+1. Log in using the provided demo credentials or create a new account.
+2. Navigate through the sidebar to access different features.
+3. Use the Companies page to manage company profiles and log communications.
+4. View scheduled and past communications on the Calendar page.
+5. Check the Analytics page for insights and trends.
+6. Admins can manage communication methods and perform advanced operations.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License.
+
+
