@@ -34,7 +34,7 @@ Before you begin, ensure you have the following installed:
 
 1. Clone the repository:
    \`\`\`
-   git clone https://github.com/your-username/communication-tracker.git
+   git clone https://github.com/Pranay898/Calender_based_app_ENTNT.git
    cd communication-tracker
    \`\`\`
 
@@ -91,7 +91,6 @@ communication-tracker/
 ├── README.md
 └── tsconfig.json
 \`\`\`
-
 ## Usage
 
 1. Log in using the provided demo credentials or create a new account.
